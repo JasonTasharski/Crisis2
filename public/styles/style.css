@@ -1,0 +1,22 @@
+.shadow {
+  -moz-box-shadow: #000 5px 5px 5px;
+  -webkit-box-shadow: #000 5px 5px 5px;
+  box-shadow: #000 5px 5px 5px;
+}
+.navbar {
+  border-radius: 0px;
+}
+body {
+	background-color: #002147;
+}
+.majorElement {
+	background-color: #C3B091;
+}
+/* Gray: #333 
+
+lgrey #9d9d9d
+khaki #C3B091
+buff #F0DC82
+beige #F5F5DC
+cosmic latte: #FFF8E7
+*/

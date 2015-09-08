@@ -1,0 +1,30 @@
+<div class="container">
+	<div class="row">
+
+		<div class="col-md-8 col-md-offset-2 majorElement shadow">
+			<h2 class="majorElement">Main Page</h2>
+			<div class="row">
+				<div class="col-xs-3">
+					<p>Scenario</p>
+				</div>
+				<div class="col-xs-3">
+					<p>Number</p>
+				</div>
+				<div class="col-xs-3">
+					<p>0/2</p>
+				</div>
+				<div class="col-xs-3">
+					<p>Join!</p>
+				</div>
+			</div>
+			<button ng-click="createRoom('roomOne')">New Room</button>
+		</div>
+	</div>
+</div>
+
+
+<!-- New Room button: on click, emits+waiting-symbol; emission to server creates a new user AND a new room, and sends a jwt to the client; when the client receives the jwt with user information, they are redirected to the room with the id that matches their user.room_id
+
+	So this is the C for room AND user handled simultaneously
+
+If lobby is completely empty, display the message "Empty World"

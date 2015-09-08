@@ -1,0 +1,26 @@
+<div class="container">
+	<div class="row">
+	<h2 class="majorElement"> Oh shit something happened! </h2>
+		<div class="col-sm-6">
+			<div class="majorElement shadow">
+				<h2>Intel</h2>
+				<!-- <p ng-repeat="intel in intels">{{ intel.content }}</p> -->
+				{{ intel }}
+			</div>
+			<div class="majorElement shadow">
+				<h2>Act!</h2>
+				<button ng-click="act('roomOne', 'teamTwo', 'condemn')">Condemn Putin!</button>
+				<button ng-click="act('roomOne', 'proxTwo', 'condemn')">Condemn Separatists!</button>
+				<button ng-click="act('roomOne', 'proxOne', 'praise')">Praise Ukrainians!</button>
+			</div>
+		</div>
+		<div class="col-sm-6 majorElement shadow">
+			<h2>Crisis Page</h2>
+			<form name="messageForm" ng-submit="sendMessage()">
+				<input ng-model="msg" type="text" id="messageInput"  placeholder="Contact Kremlin">
+			</form>
+			<p ng-repeat="message in conversation">{{ message.content }}</p>
+		</div>
+	</div>
+	<button ng-click="leaveRoom('roomOne')">Resign!</button>
+</div>
