@@ -16,7 +16,7 @@ app.controller('MainCtrl', ['$scope', '$location', function ($scope, $location) 
 	}
 }]);
 
-app.controller('CrisisCtrl', ['$scope', '$route', function ($scope, $route) {
+app.controller('CrisisCtrl', ['$scope', '$route', '$location', function ($scope, $route, $location) {
 	// $scope.$route = $route;
 	$scope.leaveRoom = function(room) {
 	  socket.emit('unsubscribe', room);
