@@ -4,6 +4,7 @@ var mongoose = require('mongoose'),
 
 var TeamSchema = new Schema({
   text: String,
+  leader: String,
   regimeType: String, //democratic regimes have nothing to fear from change of government, but less control of public opinion; authoritarian regimes have more control, but collapse completely if approval reaches zero
   strength: Number, //modifier to proxy momentum when providing direct support
   baseApproval: Number, //public approval at start

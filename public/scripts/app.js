@@ -24,8 +24,5 @@ app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $lo
 		});
 
 }]);
-var socket = io.connect('http://localhost:8080');//change line...?
-// socket.emit('send message', {
-//   room: 'roomOne',
-//   message: "Some message"
-// });
+var socket = io.connect('http://localhost:8080');
+var currentUser = new User();

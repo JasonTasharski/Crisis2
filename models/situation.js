@@ -11,7 +11,9 @@ var SituationSchema = new Schema({
   approvalTwo: Number, //5
   influenceOne: Number, //6 global influence; default victory condition
   influenceTwo: Number, //7
-  timestampt: Date //timestamp is renewed (as this.Date?) every time Situation changes; with angular, filter to Zulu
+  strengthOne: Number,
+  strengthTwo: Number,
+  timestamp: Date //timestamp is renewed (as this.Date?) every time Situation changes; with angular, filter to Zulu
 });
 
 var Situation = mongoose.model('Situation', SituationSchema);

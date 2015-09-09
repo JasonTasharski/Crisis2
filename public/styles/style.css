@@ -12,6 +12,12 @@ body {
 .majorElement {
 	background-color: #C3B091;
 }
+.ourTeam {
+	text-align: right;
+}
+.theirTeam {
+	text-align: left;
+}
 /* Gray: #333 
 
 lgrey #9d9d9d

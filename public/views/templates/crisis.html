@@ -15,11 +15,11 @@
 			</div>
 		</div>
 		<div class="col-sm-6 majorElement shadow">
-			<h2>Crisis Page</h2>
+			<h2>International Communications</h2>
 			<form name="messageForm" ng-submit="sendMessage()">
 				<input ng-model="msg" type="text" id="messageInput"  placeholder="Contact Kremlin">
 			</form>
-			<p ng-repeat="message in conversation">{{ message.content }}</p>
+			<p ng-repeat="message in conversation" ng-class="{'ourTeam' : message.from == currentUser.team}">{{ message.from }}{{ message.content }}</p>
 		</div>
 	</div>
 	<button ng-click="leaveRoom('roomOne')">Resign!</button>
