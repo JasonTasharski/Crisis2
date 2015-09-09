@@ -7,7 +7,7 @@ var ScenarioSchema = new Schema({
   teamTwo: Object,
   introOne: String,
   introTwo: String,
-  startParameters: Object
+  startParameters: Object //make this a situation
 });
 
 var Scenario = mongoose.model('Scenario', ScenarioSchema);

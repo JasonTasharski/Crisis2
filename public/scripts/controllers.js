@@ -1,10 +1,10 @@
 var app = angular.module('crisisApp.controllers', ['ngRoute', 'ngResource']);
 
 app.controller('MainCtrl', ['$scope', '$location', function ($scope, $location) {
-	$scope.rooms;
+	// $scope.allRooms;
 	socket.on('allRooms', function(data){
-		$scope.rooms = data;
-		console.log(data);
+		$scope.allRooms = data;
+		console.log($scope.allRooms);
 	});
 	$scope.createRoom = function() {
 		var teamPick;
@@ -20,6 +20,7 @@ app.controller('MainCtrl', ['$scope', '$location', function ($scope, $location) 
 	  $location.url("/wait");
 	}
 	$scope.joinRoom = function(room) {
+		console.log(room);
 	  socket.emit('subscribe', room);
 	  //remove from list
 	  $location.url("/wait");

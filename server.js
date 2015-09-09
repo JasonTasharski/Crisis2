@@ -46,14 +46,23 @@ var checkResults = function(situation){
 };
 
 io = require('socket.io').listen(arbitrary);
+
 io.on('connection', function(socket){
+
   console.log("user connected"); //log
   //emit rooms
-  // socket.emit('allRooms', db.rooms);
+  //var allRooms;
+  Room.find(function(err, rooms){
+  	socket.emit('allRooms', rooms);
+  });
+  //console.log(allRooms);
+  //socket.emit('allRooms', allRooms);
+
   // socket.join('roomOne'); // joins a specfic room; use a variable so that the user is joining a specific room
   socket.on('disconnect', function(){ //logs disconnect; sockets leave room automatically on disconnect; on disconnect
     console.log('user disconnected');//send message to other user in room
   });
+
 	socket.on('subscribe', function(room) {
     console.log('joining room', room);
     socket.join(room); //room comes from button; room users +=1
@@ -62,10 +71,14 @@ io.on('connection', function(socket){
     //timer associated, eventually
     //set room start to true; switch started/finished to situation
 	});
+
 	socket.on('newRoom', function(data) {
     console.log("new room!");
     var newRoom = new Room({users: 1, scenario: ukraine, situation: new Situation(ukraine.startParameters), oneFill: data.onF, twoFill: data.twF, started: false, finished: false});
-    // db.rooms.save(newRoom);
+    newRoom.save(function(err, room){
+    	console.log("room saved:");
+    	console.log(room);
+    });
     // no rush on server-side timer; non-MVP
     socket.join(newRoom.id);
     var thisUser;
@@ -119,6 +132,22 @@ io.on('connection', function(socket){
 	});
 });
 console.log("server started");
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // nichts unter! nichts! NICHTS! NEIN NEIN NEIN NEIN NEIN NEIN NEIN NEIN NEIn
 
 
