@@ -9,6 +9,7 @@
 			</div>
 			<div class="majorElement shadow">
 				<h2>Act!</h2>
+				<!-- Populate based on currentUser.team -->
 				<button ng-click="act('roomOne', 'teamTwo', 'condemn')">Condemn Putin!</button>
 				<button ng-click="act('roomOne', 'proxTwo', 'condemn')">Condemn Separatists!</button>
 				<button ng-click="act('roomOne', 'proxOne', 'praise')">Praise Ukrainians!</button>
@@ -19,7 +20,7 @@
 			<form name="messageForm" ng-submit="sendMessage()">
 				<input ng-model="msg" type="text" id="messageInput"  placeholder="Contact Kremlin">
 			</form>
-			<p ng-repeat="message in conversation" ng-class="{'ourTeam' : message.from == currentUser.team}">{{ message.from }}{{ message.content }}</p>
+			<p ng-repeat="message in conversation" ng-class="{'ourTeam' : message.from == currentUser.team}"><span class="strong">{{ message.from }}:</span> {{ message.content }}</p>
 		</div>
 	</div>
 	<button ng-click="leaveRoom('roomOne')">Resign!</button>

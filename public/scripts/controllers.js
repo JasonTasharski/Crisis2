@@ -8,12 +8,12 @@ app.controller('MainCtrl', ['$scope', '$location', function ($scope, $location) 
 			teamPick = {onF: true, twF: false};
 		} else {
 			currentUser.team = "teamTwo";
-			onF = false;
-			twF = true;
+			teamPick = {onF = false, twF = true};
 		}
-	  socket.emit('newRoom', teamPick);
+	  socket.emit('newRoom', {teamPick: teamPick, creator: Socket#id});
 	  //main page will show room in list (no code for that here)
 	  //redirect to crisis page; populate with data from room
+	  console.log("emit new room; waiting...");
 	  $location.url("/wait");
 	}
 	$scope.joinRoom = function(room) {
@@ -22,9 +22,11 @@ app.controller('MainCtrl', ['$scope', '$location', function ($scope, $location) 
 	  $location.url("/wait");
 	}
 	$scope.positiveConfirmation = function(room) {
+		console.log("received positive confirmation");
 		$location.url("/crisis");
 	}
 	$scope.negativeConfirmation = function(){
+		console.log("received negative confirmation");
 		$location.url("/sorry");
 	}
 }]);

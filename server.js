@@ -38,25 +38,39 @@ var prc = new Team(text: "China", leader: "Xi Jinping", regimeType: "autocratic"
 
 var ukraine = new Scenario(title: "Ukrainian Civil War", teamOne: usa, teamTwo: russia, introOne: "Heavily armed separatists have seized control of cities in Eastern Ukraine. We believe they are backed by the Russian government. We have to do something to prevent this country from being torn apart! The Ukrainian government is commencing an anti-terrorist operation.", introTwo: "The CIA has overthrown the Ukrainian government! We must act to protect the Russians in the east of the country before they're crushed by the coup leaders. After all, Ukraine was historically part of Russia anyway.", startParameters: new Situation(active: false, escalation: 3, balance: 5, momentumOne: 2, momentumTwo: 1.5, approvalOne: usa.baseApproval, approvalTwo: russia.baseApproval, influenceOne: usa.baseInfluence, influenceTwo: russia.baseApproval), strengthOne: usa.strength, strengthTwo: russia.strength);
 
+var checkResults = function(situation){
+	// assume Ukraine.
+	// on action, check for particular combinations of values in the situation (after the action is implemented) that fulfill victory or defeat conditions for either side. For instance, if Russia's influence is at any point higher than (equal to?) US influence, Putin smirks. If Russian approval ever reaches zero, Putin is overthrown (if US influence is high, Russia gains a new democratic government; if low, Russia falls into chaos). If escalation ever reaches zero, there's peace in Ukraine, and no one loses. If escalation ever exceeds ten, there's an accidental nuclear launch and everyone dies. If the balance ever reaches zero or ten, one side or the other wins the war completely, making their backer happy. Every action MUST have a timer, otherwise spam-to-victory is possible (timer is shorter when influence and approval are high, and longer when influence and approval are low)
+};
+
 io = require('socket.io').listen(arbitrary);
 io.on('connection', function(socket){
   console.log("user connected"); //log
   // socket.join('roomOne'); // joins a specfic room; use a variable so that the user is joining a specific room
   socket.on('disconnect', function(){ //logs disconnect; sockets leave room automatically on disconnect
-    console.log('user disconnected');
+    console.log('user disconnected');//send message to other user in room
   });
 	socket.on('subscribe', function(room) {
+    
     console.log('joining room', room);
     socket.join(room);
     console.log(io.sockets);
 	});
 	socket.on('newRoom', function(data) {
-    new Room(users: 1, scenario: ukraine, situation: new Situation(ukraine.startParameters), oneFill: data.onF, twoFill: data.twF, started: false, finished: false);
+    console.log("new room!");
+    var newRoom = new Room(users: 1, scenario: ukraine, situation: new Situation(ukraine.startParameters), oneFill: data.teamPick.onF, twoFill: data.teamPick.twF, started: false, finished: false);
     socket.join(room);
     console.log(io.sockets);
-    
+    if newRoom {
+ 	  	io.to(data.creator).emit('positiveConfirmation', {room: newRoom._id, scenario: newRoom.scenario});
+ 	  	console.log("emit positive confirmation");	
+ 	  } else {
+ 	  	io.to(data.creator).emit('negativeConfirmation');
+ 	  	console.log("emit negative confirmation");
+ 	  }
+ 	  //
 	});
-	socket.on('action', function(data){
+	socket.on('action', function(data){ //on action, update situation; when situation is done updating, emit updated situation and let the other stuff work itself out client-side
 		console.log("received action");
 		if (data.actionType == "condemn") {
 			if (data.target == "teamTwo") {
