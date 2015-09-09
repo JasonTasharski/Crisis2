@@ -73,11 +73,11 @@ io.on('connection', function(socket){
   		  socket.join(room);
   		  foundRoom.users++;
   		  if (foundRoom.oneFill && !foundRoom.twoFill){
-  		  	thisUser = new User({room: newRoom._id, team: 'teamTwo', faction: russia});
+  		  	thisUser = new User({room: foundRoom._id, team: 'teamTwo', faction: russia});
     			console.log("assigned user Team RUS");
     			foundRoom.twoFill = true;
   		  } else if (foundRoom.twoFill && !foundRoom.oneFill){
-  		  	thisUser = new User({room: newRoom._id, team: 'teamOne', faction: usa});
+  		  	thisUser = new User({room: foundRoom._id, team: 'teamOne', faction: usa});
     			console.log("assigned user Team USA");
     			foundRoom.oneFill = true;
     		}

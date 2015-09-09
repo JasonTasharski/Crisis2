@@ -21,7 +21,7 @@
 						<p>{{room.users}}/2</p>
 					</div>
 					<div class="col-xs-3">
-						<button ng-show="!room.started && (room.users < 2)" ng-click="joinRoom('room._id')">Join!</button>
+						<button ng-show="!room.started && (room.users < 2)" ng-click="joinRoom(room._id)">Join!</button>
 						<p ng-show="room.started">Can't Join</p>
 					</div>
 				</div>
