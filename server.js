@@ -40,8 +40,10 @@ var prc = new Team({title: "China", leader: "Xi Jinping", regimeType: "autocrati
 
 var ukraine = new Scenario({title: "Ukrainian Civil War", teamOne: usa, teamTwo: russia, introOne: "Heavily armed separatists have seized control of cities in Eastern Ukraine. We believe they are backed by the Russian government. We have to do something to prevent this country from being torn apart! The Ukrainian government is commencing an anti-terrorist operation.", introTwo: "The CIA has overthrown the Ukrainian government! We must act to protect the Russians in the east of the country before they're crushed by the coup leaders. After all, Ukraine was historically part of Russia anyway.", startParameters: new Situation({active: false, escalation: 3, balance: 5, momentumOne: 2, momentumTwo: 1.5, approvalOne: usa.baseApproval, approvalTwo: russia.baseApproval, influenceOne: usa.baseInfluence, influenceTwo: russia.baseApproval}), strengthOne: usa.strength, strengthTwo: russia.strength});
 
-var checkResults = function(situation){
-	// assume Ukraine.
+var checkResults = function(scenario, situation){
+	if (scenario.title == "Ukrainian Civil War"){
+
+	}
 	// on action, check for particular combinations of values in the situation (after the action is implemented) that fulfill victory or defeat conditions for either side. For instance, if Russia's influence is at any point higher than (equal to?) US influence, Putin smirks. If Russian approval ever reaches zero, Putin is overthrown (if US influence is high, Russia gains a new democratic government; if low, Russia falls into chaos). If escalation ever reaches zero, there's peace in Ukraine, and no one loses. If escalation ever exceeds ten, there's an accidental nuclear launch and everyone dies. If the balance ever reaches zero or ten, one side or the other wins the war completely, making their backer happy. Every action MUST have a timer, otherwise spam-to-victory is possible (timer is shorter when influence and approval are high, and longer when influence and approval are low)
 };
 
@@ -64,7 +66,29 @@ io.on('connection', function(socket){
   });
 
 	socket.on('subscribe', function(room) {
-    console.log('joining room', room);
+    console.log('seeking room: ' + room);
+    Room.findOne({_id: room}, function(err, foundRoom){
+    	if (foundRoom.users == 1){
+  		  console.log('joining room: ' + room);
+  		  socket.join(room);
+  		  foundRoom.users++;
+  		  if (foundRoom.oneFill && !foundRoom.twoFill){
+  		  	thisUser = new User({room: newRoom._id, team: 'teamTwo', faction: russia});
+    			console.log("assigned user Team RUS");
+    			foundRoom.twoFill = true;
+  		  } else if (foundRoom.twoFill && !foundRoom.oneFill){
+  		  	thisUser = new User({room: newRoom._id, team: 'teamOne', faction: usa});
+    			console.log("assigned user Team USA");
+    			foundRoom.oneFill = true;
+    		}
+	 	  	socket.emit('positiveConfirmation', {scenario: foundRoom.scenario, user: thisUser});
+	 	  	console.log("emit positive confirmation");
+    	} else {
+    		socket.emit('negativeConfirmation');
+ 	  		console.log("emit negative confirmation");
+ 	  		socket.leave(room)
+    	}
+    })
     socket.join(room); //room comes from button; room users +=1
     console.log(io.sockets);//assign free team, scenario
     //pos/neg confirmation
@@ -80,23 +104,22 @@ io.on('connection', function(socket){
     	console.log(room);
     });
     // no rush on server-side timer; non-MVP
-    socket.join(newRoom.id);
+    socket.join(newRoom._id);
     var thisUser;
     if (data.onF){
-    	thisUser = new User({room: newRoom.id, team: 'teamOne', faction: usa});
+    	thisUser = new User({room: newRoom._id, team: 'teamOne', faction: usa});
     	console.log("assigned user Team USA");
     } else if (data.twF){
-    	thisUser = new User({room: newRoom.id, team: 'teamTwo', faction: russia});
+    	thisUser = new User({room: newRoom._id, team: 'teamTwo', faction: russia});
     	console.log("assigned user Team RUS");
     }
-    console.log(socket);
-    //console.log(io.sockets);
     if (newRoom) {
  	  	socket.emit('positiveConfirmation', {scenario: newRoom.scenario, user: thisUser});
  	  	console.log("emit positive confirmation");	
  	  } else {
  	  	socket.emit('negativeConfirmation');
  	  	console.log("emit negative confirmation");
+ 	  	socket.leave(newRoom._id);
  	  }
  	  //
 	});
@@ -160,4 +183,4 @@ console.log("server started");
 	//emit roomcreated+id
 
 	//splash!
-	//join this.id(ngclick = joinR(room_id))
+	//join this._id(ngclick = joinR(room_id))
