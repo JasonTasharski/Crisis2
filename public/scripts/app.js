@@ -12,6 +12,14 @@ app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $lo
         	templateUrl: 'views/templates/crisis.html',
         	controller: 'CrisisCtrl'
         })
+        .when('/wait', {
+          templateUrl: 'views/templates/wait.html',
+          controller: 'MainCtrl'
+        })
+        .when('/sorry', {
+          templaterl: 'views/templates/sorry.html',
+          controller: 'MainCtrl'
+        })
         .otherwise({
         	redirectTo: '/'
         });

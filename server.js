@@ -54,6 +54,7 @@ io.on('connection', function(socket){
     new Room(users: 1, scenario: ukraine, situation: new Situation(ukraine.startParameters), oneFill: data.onF, twoFill: data.twF, started: false, finished: false);
     socket.join(room);
     console.log(io.sockets);
+    
 	});
 	socket.on('action', function(data){
 		console.log("received action");

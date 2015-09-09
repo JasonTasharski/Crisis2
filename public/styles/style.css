@@ -18,6 +18,9 @@ body {
 .theirTeam {
 	text-align: left;
 }
+.waitMessage {
+	text-align: center;
+}
 /* Gray: #333 
 
 lgrey #9d9d9d

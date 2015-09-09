@@ -14,12 +14,18 @@ app.controller('MainCtrl', ['$scope', '$location', function ($scope, $location) 
 	  socket.emit('newRoom', teamPick);
 	  //main page will show room in list (no code for that here)
 	  //redirect to crisis page; populate with data from room
-	  $location.url("/crisis");
+	  $location.url("/wait");
 	}
 	$scope.joinRoom = function(room) {
 	  socket.emit('subscribe', room);
 	  //remove from list
-	  $location.url("/crisis");
+	  $location.url("/wait");
+	}
+	$scope.positiveConfirmation = function(room) {
+		$location.url("/crisis");
+	}
+	$scope.negativeConfirmation = function(){
+		$location.url("/sorry");
 	}
 }]);
 
