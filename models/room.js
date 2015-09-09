@@ -4,13 +4,13 @@ var mongoose = require('mongoose'),
     Scenario = require('./scenario.js');
 
 var RoomSchema = new Schema({
-	users = Number,
-	scenario = [Scenario.schema],
-	situation = [Situation.schema],
-	oneFill = Boolean,
-	twoFill = Boolean,
-	started = Boolean,
-	finished = Boolean
+	users: Number,
+	scenario: [Scenario.schema],
+	situation: [Situation.schema],
+	oneFill: Boolean,
+	twoFill: Boolean,
+	started: Boolean,
+	finished: Boolean
 });
 
 var Room = mongoose.model('Room', RoomSchema);

@@ -1,16 +1,19 @@
 var app = angular.module('crisisApp.controllers', ['ngRoute', 'ngResource']);
 
 app.controller('MainCtrl', ['$scope', '$location', function ($scope, $location) {
+	$scope.rooms;
+	socket.on('allRooms', function(data){
+		$scope.rooms = data;
+		console.log(data);
+	});
 	$scope.createRoom = function() {
 		var teamPick;
 		if (Math.random() > 0.5){
-			currentUser.team = "teamOne";
 			teamPick = {onF: true, twF: false};
 		} else {
-			currentUser.team = "teamTwo";
-			teamPick = {onF = false, twF = true};
+			teamPick = {onF: false, twF: true};
 		}
-	  socket.emit('newRoom', {teamPick: teamPick, creator: Socket#id});
+	  socket.emit('newRoom', teamPick);
 	  //main page will show room in list (no code for that here)
 	  //redirect to crisis page; populate with data from room
 	  console.log("emit new room; waiting...");
@@ -21,19 +24,25 @@ app.controller('MainCtrl', ['$scope', '$location', function ($scope, $location) 
 	  //remove from list
 	  $location.url("/wait");
 	}
-	$scope.positiveConfirmation = function(room) {
+	socket.on('positiveConfirmation', function (data){
 		console.log("received positive confirmation");
+		currentUser = data.user;
+		clientScenario = data.scenario;
 		$location.url("/crisis");
-	}
-	$scope.negativeConfirmation = function(){
+	});
+	socket.on('negativeConfirmation', function(){
 		console.log("received negative confirmation");
 		$location.url("/sorry");
-	}
+	});
 }]);
 
 app.controller('CrisisCtrl', ['$scope', '$route', '$location', function ($scope, $route, $location) {
 	// $scope.$route = $route;
 	$scope.leaveRoom = function(room) {
+		// resign; update room to finished, set ending to "user.team resignation", give other user that screen
+		// on server side, set room to users -= 1; if > 0, other user gets win message; if 0, delete room
+		currentUser = null;
+		clientScenario = null;
 	  socket.emit('unsubscribe', room);
 	  //main page will show room in list (no code for that here)
 	  //redirect to crisis page; populate with data from room

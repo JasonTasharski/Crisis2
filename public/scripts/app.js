@@ -1,4 +1,3 @@
-
 var app = angular.module('crisisApp', ['ngRoute', 'ngResource','crisisApp.controllers']);
 
 app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $locationProvider) {
@@ -33,5 +32,5 @@ app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $lo
 
 }]);
 var socket = io.connect('http://localhost:8080');
-var currentUser = new User();
-console.log(Socket#id);
+var currentUser;
+var clientScenario;
