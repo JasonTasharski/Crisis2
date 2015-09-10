@@ -31,6 +31,10 @@ body {
 button{
 	margin: 5px 10px 5px 10px;
 }
+.pad{
+	padding: 5px;
+}
+
 /* Gray: #333 
 
 lgrey #9d9d9d

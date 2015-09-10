@@ -14,12 +14,14 @@
 	<div class="row">
 		<div class="col-xs-6">
 			<div class="majorElement shadow">
-				<h3 class="alignCenter">Intel</h3>
+				<h3 class="alignCenter pad">Intel</h3>
 				<!-- <p ng-repeat="intel in intels">{{ intel.content }}</p> -->
-				{{ intel }}
+				<div class="pad">
+					{{ intel }}
+				</div>
 			</div>
 			<div class="majorElement shadow">
-				<h3 class="alignCenter">Act!</h3>
+				<h3 class="alignCenter pad">Act!</h3>
 				<!-- Populate based on currentUser.team -->
 				<div ng-repeat="action in actionList">
 					<div class="row">
@@ -27,7 +29,7 @@
 							<button ng-click="act(action)">{{ action.text }}</button>
 						</div>
 						<div class="col-xs-8">
-							<p> {{ action.details }}</p>
+							<p class="pad"> {{ action.details }}</p>
 						</div>
 					</div>
 					<hr>
@@ -36,15 +38,16 @@
 		</div>
 		<div class="col-xs-6">
 			<div class="majorElement shadow">
-				<h3 class="alignCenter">Negotiate</h3>
+				<h3 class="alignCenter pad">Negotiate</h3>
 				<form name="messageForm" ng-submit="sendMessage()">
-					<input ng-model="msg" type="text" id="messageInput"  placeholder="Contact Rival" class="fullWidth">
+					<input ng-model="msg" type="text" id="messageInput"  placeholder="Contact Rival" class="fullWidth pad">
 				</form>
-				<div ng-show="conversation">
+				<div ng-show="conversation" class="pad">
 					<p ng-repeat="message in conversation | reverse"><span class="strong">{{ message.from }}:</span> {{ message.content }}</p>
 				</div>
 			</div>
 		</div>
 	</div>
 	<button ng-click="leaveRoom(currentUser.room)">Resign!</button>
-</div>
+<!-- 	<button ng-click="leaveRoom(currentUser.room)">Resign!</button>
+ --></div>

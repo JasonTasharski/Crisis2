@@ -137,10 +137,9 @@ io.on('connection', function(socket){
  	  		socket.leave(room)
     	}
     	foundRoom.save();
+    	socket.emit('intel', {introOne: foundRoom.scenario[0].introOne, introTwo: foundRoom.scenario[0].introTwo}); //redundancy for demo-safety; duplication won't matter
     	io.to(room).emit('intel', {introOne: foundRoom.scenario[0].introOne, introTwo: foundRoom.scenario[0].introTwo});
     })    
-    //assign free team, scenario
-    //pos/neg confirmation
     //timer associated, eventually
     //set room start to true; switch started/finished to situation
 	});
@@ -175,7 +174,7 @@ io.on('connection', function(socket){
     	console.log(foundRoom.situation[0]);
     	updateSituation(foundRoom.situation[0], data.impact, function(){
     		foundRoom.save(function(){
-    			io.to(data.room).emit('intel', foundRoom.situation[0]);
+    			io.to(data.room).emit('intel', "The situation has mysteriously changed. No one's sure how or why at the moment. The only sure thing is that the world is waiting for YOU to respond!");
     		});
     	});
     });
@@ -193,16 +192,17 @@ io.on('connection', function(socket){
   			foundRoom.oneFill = "";
   			foundRoom.users--;
   			foundRoom.save();
-  		}
-  	});
-  	Room.findOne({twoFill: socket.id}, function(err, foundRoom){
-  		if (foundRoom.users < 2){
-				foundRoom.remove();
-				console.log("room deleted");
-			} else if (foundRoom){
-  			foundRoom.twoFill = "";
-  			foundRoom.users--;
-  			foundRoom.save();
+  		} else {
+		  	Room.findOne({twoFill: socket.id}, function(err, foundRoom){
+		  		if (foundRoom.users < 2){
+						foundRoom.remove();
+						console.log("room deleted");
+					} else if (foundRoom){
+		  			foundRoom.twoFill = "";
+		  			foundRoom.users--;
+		  			foundRoom.save();
+		  		}
+		  	});  			
   		}
   	});
 	});

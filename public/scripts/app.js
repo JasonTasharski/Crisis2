@@ -19,6 +19,10 @@ app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $lo
           templaterl: 'views/templates/sorry.html',
           controller: 'MainCtrl'
         })
+        .when('/results', {
+          templaterl: 'views/templates/results.html',
+          controller: 'CrisisCtrl'
+        })
         .otherwise({
         	redirectTo: '/'
         });
