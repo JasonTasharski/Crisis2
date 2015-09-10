@@ -1,25 +1,44 @@
 <div class="container">
 	<div class="row">
-	<h2 class="majorElement">Ukrainian Civil War</h2>
-		<div class="col-sm-6">
+		<div class="col-xs-12 majorElement shadow">
+			<div class="row">
+				<div class="col-xs-6">
+					<h1>Ukrainian Civil War</h1>
+				</div>
+				<div class="col-xs-6">
+					<h2 class="alignRight">{{ playerName }}</h2>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-6">
 			<div class="majorElement shadow">
-				<h2>Intel</h2>
+				<h3 class="alignCenter">Intel</h3>
 				<!-- <p ng-repeat="intel in intels">{{ intel.content }}</p> -->
 				{{ intel }}
 			</div>
 			<div class="majorElement shadow">
-				<h2>Act!</h2>
+				<h3 class="alignCenter">Act!</h3>
 				<!-- Populate based on currentUser.team -->
 				<div ng-repeat="action in actionList">
-					<button ng-click="act(action)">{{ action.text }}</button>
+					<div class="row">
+						<div class="col-xs-4 alignCenter">
+							<button ng-click="act(action)">{{ action.text }}</button>
+						</div>
+						<div class="col-xs-8">
+							<p> {{ action.details }}</p>
+						</div>
+					</div>
+					<hr>
 				</div>
 			</div>
 		</div>
-		<div class="col-sm-6">
+		<div class="col-xs-6">
 			<div class="majorElement shadow">
-				<h2>Negotiate</h2>
+				<h3 class="alignCenter">Negotiate</h3>
 				<form name="messageForm" ng-submit="sendMessage()">
-					<input ng-model="msg" type="text" id="messageInput"  placeholder="Contact Rival">
+					<input ng-model="msg" type="text" id="messageInput"  placeholder="Contact Rival" class="fullWidth">
 				</form>
 				<div ng-show="conversation">
 					<p ng-repeat="message in conversation | reverse"><span class="strong">{{ message.from }}:</span> {{ message.content }}</p>

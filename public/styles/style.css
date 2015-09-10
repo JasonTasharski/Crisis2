@@ -25,6 +25,9 @@ body {
 .redfor{
 	background-color: #65000B;
 }
+.fullWidth{
+	width: 100%;
+}
 button{
 	margin: 5px 10px 5px 10px;
 }

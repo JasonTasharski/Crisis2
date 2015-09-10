@@ -64,9 +64,15 @@ app.controller('CrisisCtrl', ['$scope', '$route', '$location', function ($scope,
 	socket.on('intel', function(data){
 		console.log("received intel");
 		console.log(data);
-		$scope.$apply(function(){
-			$scope.intel = data;
-		});
+		if (data.introOne && (currentUser.team == 'teamOne')){
+			$scope.intel = data.introOne;
+		} else if (data.introOne && (currentUser.team == 'teamTwo')){
+			$scope.intel = data.introTwo;
+		} else {
+			$scope.$apply(function(){
+				$scope.intel = data;
+			});
+		}
 	});
 
 	$scope.sendMessage = function(){

@@ -42,8 +42,8 @@ var armUkraine = new Action({available: true, done: false, text: "Arm Ukraine!",
 var armSeparatists = new Action({available: true, done: false, text: "Arm Separatists!", details: "Send weapons to help the friendly Separatist Republics win the war. Friendly forces will make more progress, but the conflict will escalate.", impact: {influenceTwo: 0.2, momentumTwo: 1, escalation: 0.2}});
 var condemnRussia = new Action({available: true, done: false, text: "Condemn Russia!", details: "Accuse Russia of bad things at the UN. Your influence will rise, but conflict will escalate.", impact: {influenceOne: 0.5, escalation: 0.1}});
 var condemnUS = new Action({available: true, done: false, text: "Condemn USA!", details: "Accuse the United States of bad things at the UN. Your influence will rise, but conflict will escalate.", impact: {influenceTwo: 0.5, escalation: 0.1}});
-var sendTroopsU = new Action({available: true, done: false, text: "Launch Airstrikes!", details: "Directly attack Separatist forces. Friendly troops will make more progress, but the war will escalate greatly.", impact: {influenceOne: 0.5, momentumOne: 2, escalation: 0.5}});
-var sendTroopsR = new Action({available: true, done: false, text: "Send Tanks!", details: "Directly attack Ukrainian forces. Friendly troops will make more progress, but the war will escalate greatly.", impact: {influenceTwo: 0.5, momentumTwo: 2, escalation: 0.5}});
+var sendTroopsU = new Action({available: true, done: false, text: "Launch Airstrikes!", details: "Directly attack Separatist forces. Friendly troops will make more progress, but the conflict will escalate greatly.", impact: {influenceOne: 0.5, momentumOne: 2, escalation: 0.5}});
+var sendTroopsR = new Action({available: true, done: false, text: "Send Tanks!", details: "Directly attack Ukrainian forces. Friendly troops will make more progress, but the conflict will escalate greatly.", impact: {influenceTwo: 0.5, momentumTwo: 2, escalation: 0.5}});
 
 var usa = new Team({title: "USA", leader: "Barack Obama", regimeType: "democratic", strength: 9, baseApproval: 4, baseInfluence: 8, actions: [pressureCeasefireU, armUkraine, condemnRussia, sendTroopsU]});
 var russia = new Team({title: "Russia", leader: "Vladimir Putin", regimeType: "autocratic", strength: 6, baseApproval: 7, baseInfluence: 5, actions: [pressureCeasefireR, armSeparatists, condemnUS, sendTroopsR]});
@@ -53,10 +53,10 @@ var russia = new Team({title: "Russia", leader: "Vladimir Putin", regimeType: "a
 var ukraine = new Scenario({title: "Ukrainian Civil War", teamOne: usa, teamTwo: russia, introOne: "Heavily armed separatists have seized control of cities in Eastern Ukraine. We believe they are backed by the Russian government. We have to do something to prevent this country from being torn apart! The Ukrainian government is commencing an anti-terrorist operation.", introTwo: "The CIA has overthrown the Ukrainian government! We must act to protect the Russians in the east of the country before they're crushed by the coup leaders. After all, Ukraine was historically part of Russia anyway.", startParameters: new Situation({active: false, escalation: 0.3, balance: 5, momentumOne: 2, momentumTwo: 1.5, approvalOne: usa.baseApproval, approvalTwo: russia.baseApproval, influenceOne: usa.baseInfluence, influenceTwo: russia.baseInfluence}), strengthOne: usa.strength, strengthTwo: russia.strength});
 
 var updateSituation = function(target, impact, callback){
-	target.momentumOne += impact.momentumOne;
-	target.momentumTwo += impact.momentumTwo;
-	target.escalation += impact.escalation;
-	target.influenceOne += impact.influenceOne;
+	target.momentumOne += impact.momentumOne,
+	target.momentumTwo += impact.momentumTwo,
+	target.escalation += impact.escalation,
+	target.influenceOne += impact.influenceOne,
 	target.influenceTwo += impact.influenceTwo;
 	callback();
 }
@@ -115,7 +115,8 @@ io.on('connection', function(socket){
     	if (foundRoom.users == 1){
   		  console.log('joining room: ' + room);
   		  socket.join(room);
-  		  foundRoom.users++;
+  		  foundRoom.users++,
+  		  foundRoom.started = true;
   		  if (foundRoom.oneFill && !foundRoom.twoFill){
   		  	thisUser = new User({room: foundRoom._id, team: 'teamTwo', faction: russia});
     			console.log("assigned user Team RUS");
@@ -135,10 +136,9 @@ io.on('connection', function(socket){
  	  		console.log("emit negative confirmation");
  	  		socket.leave(room)
     	}
-    	foundRoom.save();//callback error handling later
-    })
-    socket.join(room); //room comes from button; room users +=1
-    
+    	foundRoom.save();
+    	io.to(room).emit('intel', {introOne: foundRoom.scenario[0].introOne, introTwo: foundRoom.scenario[0].introTwo});
+    })    
     //assign free team, scenario
     //pos/neg confirmation
     //timer associated, eventually
