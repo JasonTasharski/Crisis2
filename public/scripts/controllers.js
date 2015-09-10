@@ -3,8 +3,10 @@ var app = angular.module('crisisApp.controllers', ['ngRoute', 'ngResource']);
 app.controller('MainCtrl', ['$scope', '$location', function ($scope, $location) {
 	// $scope.allRooms;
 	socket.on('allRooms', function(data){
-		$scope.allRooms = data;
-		console.log($scope.allRooms);
+		$scope.$apply(function(){
+			$scope.allRooms = data;
+			console.log($scope.allRooms);			
+		});
 	});
 	$scope.createRoom = function() {
 		var teamPick;
@@ -29,7 +31,7 @@ app.controller('MainCtrl', ['$scope', '$location', function ($scope, $location) 
 		console.log("received positive confirmation");
 		currentUser = data.user;
 		clientScenario = data.scenario;
-		$location.url("/crisis");
+		$location.url("/crisis");// test $apply TODO TODO TODO TODO!!!!!
 	});
 	socket.on('negativeConfirmation', function(){
 		console.log("received negative confirmation");

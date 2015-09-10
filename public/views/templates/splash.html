@@ -3,10 +3,10 @@
 
 		<div class="col-md-8 col-md-offset-2 majorElement shadow">
 			<h2 class="majorElement">Rooms</h2>
-			<div ng-show="!allRooms">
+			<div ng-show="!allRooms[0]">
 				<h3 class="majorElement">No rooms running</h3>
 			</div>
-			<div ng-show="allRooms">
+			<div ng-show="allRooms[0]">
 				<!-- populate based on rooms in rooms; filer to only show those with a slot open; docs: https://docs.angularjs.org/api/ng/filter/filter -->
 				<div ng-repeat="room in allRooms" class="row">
 					<div class="col-xs-3">
@@ -21,8 +21,8 @@
 						<p>{{room.users}}/2</p>
 					</div>
 					<div class="col-xs-3">
-						<button ng-show="!room.started && (room.users < 2)" ng-click="joinRoom(room._id)">Join!</button>
-						<p ng-show="room.started">Can't Join</p>
+						<button ng-show="!room.started && (room.users < 2) && !currentUser" ng-click="joinRoom(room._id)">Join!</button>
+						<p ng-show="(room.users > 1) || room.started">Can't Join</p>
 					</div>
 				</div>
 			</div>

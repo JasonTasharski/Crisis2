@@ -7,8 +7,8 @@ var RoomSchema = new Schema({
 	users: Number,
 	scenario: [Scenario.schema],
 	situation: [Situation.schema],
-	oneFill: Boolean,
-	twoFill: Boolean,
+	oneFill: String,
+	twoFill: String,
 	started: Boolean,
 	finished: Boolean
 });

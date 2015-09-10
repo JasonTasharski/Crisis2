@@ -12,13 +12,13 @@ body {
 .majorElement {
 	background-color: #C3B091;
 }
-.ourTeam {
+.alignRight {
 	text-align: right;
 }
-.theirTeam {
+.alignLeft {
 	text-align: left;
 }
-.waitMessage {
+.alignCenter {
 	text-align: center;
 }
 /* Gray: #333 

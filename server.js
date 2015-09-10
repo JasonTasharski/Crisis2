@@ -62,6 +62,29 @@ io.on('connection', function(socket){
 
   // socket.join('roomOne'); // joins a specfic room; use a variable so that the user is joining a specific room
   socket.on('disconnect', function(){ //logs disconnect; sockets leave room automatically on disconnect; on disconnect
+	// find rooms where user is connected; set teams to "" if they match socket.id
+	console.log("disconnect initiated!");
+	console.log(socket.id);
+  	Room.findOne({oneFill: socket.id}, function(err, foundRoom){
+  		if (foundRoom){
+  			foundRoom.oneFill = "";
+  			foundRoom.users--;
+  			if (foundRoom.users == 0){
+  				foundRoom.remove();
+  				console.log("room deleted");
+  			}
+  		}
+  	});
+  	Room.findOne({twoFill: socket.id}, function(err, foundRoom){
+  		if (foundRoom){
+  			foundRoom.twoFill = "";
+  			foundRoom.users--;
+  			if (foundRoom.users == 0){
+  				foundRoom.remove();
+  				console.log("room deleted");
+  			}
+  		}
+  	});
     console.log('user disconnected');//send message to other user in room
   });
 
@@ -75,11 +98,14 @@ io.on('connection', function(socket){
   		  if (foundRoom.oneFill && !foundRoom.twoFill){
   		  	thisUser = new User({room: foundRoom._id, team: 'teamTwo', faction: russia});
     			console.log("assigned user Team RUS");
-    			foundRoom.twoFill = true;
+    			foundRoom.twoFill = socket.id;
   		  } else if (foundRoom.twoFill && !foundRoom.oneFill){
   		  	thisUser = new User({room: foundRoom._id, team: 'teamOne', faction: usa});
     			console.log("assigned user Team USA");
-    			foundRoom.oneFill = true;
+    			foundRoom.oneFill = socket.id;
+    		} else {
+    			console.log(foundRoom);
+    			console.log("else happened");
     		}
 	 	  	socket.emit('positiveConfirmation', {scenario: foundRoom.scenario, user: thisUser});
 	 	  	console.log("emit positive confirmation");
@@ -88,9 +114,11 @@ io.on('connection', function(socket){
  	  		console.log("emit negative confirmation");
  	  		socket.leave(room)
     	}
+    	foundRoom.save();//callback error handling later
     })
     socket.join(room); //room comes from button; room users +=1
-    console.log(io.sockets);//assign free team, scenario
+    
+    //assign free team, scenario
     //pos/neg confirmation
     //timer associated, eventually
     //set room start to true; switch started/finished to situation
@@ -98,7 +126,7 @@ io.on('connection', function(socket){
 
 	socket.on('newRoom', function(data) {
     console.log("new room!");
-    var newRoom = new Room({users: 1, scenario: ukraine, situation: new Situation(ukraine.startParameters), oneFill: data.onF, twoFill: data.twF, started: false, finished: false});
+    var newRoom = new Room({users: 1, scenario: ukraine, situation: new Situation(ukraine.startParameters), oneFill: data.onF ? socket.id : "", twoFill: data.twF ? socket.id : "", started: false, finished: false});
     newRoom.save(function(err, room){
     	console.log("room saved:");
     	console.log(room);
@@ -141,10 +169,29 @@ io.on('connection', function(socket){
 		}
 	});
 	socket.on('unsubscribe', function(room) {
-    console.log('leaving room', room);
-    // update room users -= 1;
-    // if rooms 
+    console.log('leaving room');
+    console.log(socket.id);
     socket.leave(room);
+    Room.findOne({oneFill: socket.id}, function(err, foundRoom){
+  		if (foundRoom){
+  			foundRoom.oneFill = "";
+  			foundRoom.users--;
+  			if (foundRoom.users == 0){
+  				foundRoom.remove();
+  				console.log("room deleted");
+  			}
+  		}
+  	});
+  	Room.findOne({twoFill: socket.id}, function(err, foundRoom){
+  		if (foundRoom){
+  			foundRoom.twoFill = "";
+  			foundRoom.users--;
+  			if (foundRoom.users == 0){
+  				foundRoom.remove();
+  				console.log("room deleted");
+  			}
+  		}
+  	});
 	});
 	var allMessages = [];
 	socket.on('userMessage', function(data) {
@@ -155,32 +202,3 @@ io.on('connection', function(socket){
 	});
 });
 console.log("server started");
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// nichts unter! nichts! NICHTS! NEIN NEIN NEIN NEIN NEIN NEIN NEIN NEIN NEIn
-
-
-// NOTES NOTES NOTES NOTES NOTES
-// client - createRoom()
-	// emit newRoom
-	//server on newR
-	//	create room in db
-	// room id
-	//emit roomcreated+id
-
-	//splash!
-	//join this._id(ngclick = joinR(room_id))
