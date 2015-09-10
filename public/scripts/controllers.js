@@ -87,8 +87,6 @@ app.controller('CrisisCtrl', ['$scope', '$route', '$location', function ($scope,
 			console.log(data);
 			$scope.conversation = data;
 		})
-		if (!startCrisis){
-			startCrisis = true;
-		}
+		startCrisis = true;
 	});
 }]);
