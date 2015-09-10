@@ -54,24 +54,23 @@ var ukraine = new Scenario({title: "Ukrainian Civil War", teamOne: usa, teamTwo:
 
 var updateSituation = function(target, impact, callback){
 	console.log(target);
-	target.momentumOne += impact.momentumOne,
-	target.momentumTwo += impact.momentumTwo,
-	target.escalation += impact.escalation,
-	target.influenceOne += impact.influenceOne,
-	target.influenceTwo += impact.influenceTwo;
+	target.momentumOne += (impact.momentumOne || 0),
+	target.momentumTwo += (impact.momentumTwo || 0),
+	target.escalation += (impact.escalation || 0),
+	target.influenceOne += (impact.influenceOne || 0),
+	target.influenceTwo += (impact.influenceTwo || 0);
+	target.balance += ((target.momentumOne - target.momentumTwo)*target.escalation);
 	console.log(target);
 	callback();
 }
 
-var checkResults = function(scenario, situation, callback){
-	if (scenario.title == "Ukrainian Civil War"){
-		if (situation.balance >= 10){
-			//Ukraine has suppressed the Russian-backed separatists
-		} else if (situation.balance <= 0){
-			//The separatatists have reached Kiev and overthrown the fascist junta
-		} else if (situation.escalation >= 2){
-			//ww3
-		}
+var checkResults = function(situation, callback){
+	if (situation.balance >= 10){
+		//Ukraine has suppressed the Russian-backed separatists
+	} else if (situation.balance <= 0){
+		//The separatatists have reached Kiev and overthrown the fascist junta
+	} else if (situation.escalation >= 2){
+		//ww3
 	}
 	// on action, check for particular combinations of values in the situation (after the action is implemented) that fulfill victory or defeat conditions for either side. For instance, if Russia's influence is at any point higher than (equal to?) US influence, Putin smirks. If Russian approval ever reaches zero, Putin is overthrown (if US influence is high, Russia gains a new democratic government; if low, Russia falls into chaos). If escalation ever reaches zero, there's peace in Ukraine, and no one loses. If escalation ever exceeds ten, there's an accidental nuclear launch and everyone dies. If the balance ever reaches zero or ten, one side or the other wins the war completely, making their backer happy. Every action MUST have a timer, otherwise spam-to-victory is possible (timer is shorter when influence and approval are high, and longer when influence and approval are low)
 };
@@ -176,9 +175,33 @@ io.on('connection', function(socket){
 
 	socket.on('action', function(data){
     Room.findOne({_id: data.room}, function(err, foundRoom){
+    	var previousSituation = foundRoom.situation[0];
+    	var outgoingIntel = String;
     	updateSituation(foundRoom.situation[0], data.impact, function(){
-    		foundRoom.save(function(){
-    			io.to(data.room).emit('intel', "Someone acted, but the situation on the ground only changed temporarily. We're probably going to be stuck in a frozen conflict forever at this rate.");
+    		console.log(foundRoom.situation[0]);
+    		foundRoom.situation[0].save();
+    		foundRoom.save(function(err, res){
+    			if (err) {
+    				console.log(err);
+    			}
+    			if (previousSituation.balance == foundRoom.situation[0].balance){
+    				outgoingIntel += "There's a stalemate along the front line. ";
+    			} else if (previousSituation.balance < foundRoom.situation[0].balance){
+    				outgoingIntel += "The Ukrainian government is gaining ground against the Separatists. ";
+    			} else if (previousSituation.balance > foundRoom.situation[0].balance){
+    				outgoingIntel += "The Separatists are pushing back the Ukrainian government. ";
+    			}
+    			if (previousSituation.escalation > foundRoom.situation[0].escalation){
+    				outgoingIntel += "Fewer people are dying on all sides. ";
+    			} else if (previousSituation.balance < foundRoom.situation[0].balance){
+    				outgoingIntel += "More people are dying on all sides. ";
+    			}
+    			if ((previousSituation.influenceOne/previousSituation.influenceTwo) < (foundRoom.situation[0].influenceOne/foundRoom.situation[0].influenceTwo)){
+    				outgoingIntel += "Obama is taking control of the situation. ";
+    			} else if ((previousSituation.influenceOne/previousSituation.influenceTwo) > (foundRoom.situation[0].influenceOne/foundRoom.situation[0].influenceTwo)){
+    				outgoingIntel += "Putin is taking control of the situation. ";
+    			}
+    			io.to(data.room).emit('intel', outgoingIntel);
     		});
     	});
     });
