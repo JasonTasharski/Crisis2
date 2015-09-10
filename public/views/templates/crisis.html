@@ -17,11 +17,11 @@
 		</div>
 		<div class="col-sm-6">
 			<div class="majorElement shadow">
-				<h2>International Communications</h2>
+				<h2>Negotiate</h2>
 				<form name="messageForm" ng-submit="sendMessage()">
-					<input ng-model="msg" type="text" id="messageInput"  placeholder="Contact Kremlin">
+					<input ng-model="msg" type="text" id="messageInput"  placeholder="Contact Rival">
 				</form>
-				<p ng-repeat="message in conversation" ng-class="{'ourTeam' : message.from == currentUser.team}"><span class="strong">{{ message.from }}:</span> {{ message.content }}</p>
+				<p ng-repeat="message in conversation | reverse"><span class="strong">{{ message.from }}:</span> {{ message.content }}</p>
 			</div>
 		</div>
 	</div>

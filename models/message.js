@@ -2,10 +2,8 @@ var mongoose = require('mongoose'),
     Schema = mongoose.Schema;
 
 var MessageSchema = new Schema({
-  room: String,
   from: String,
-  content: String,
-  timestamp: Date //with angular, filter to Zulu
+  content: String
 });
 
 var Message = mongoose.model('Message', MessageSchema);

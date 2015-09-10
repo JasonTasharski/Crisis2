@@ -193,12 +193,14 @@ io.on('connection', function(socket){
   		}
   	});
 	});
-	var allMessages = [];
 	socket.on('userMessage', function(data) {
   	console.log(data);
-  	allMessages.push(new Message(data));
-  	console.log(allMessages);
-    io.to(data.room).emit('allMessages', allMessages);
+  	Room.findOne({_id: data.room}, function(err, foundRoom){
+  		foundRoom.messages.push(new Message(data.message));
+  		foundRoom.save();
+  		console.log(foundRoom.messages);
+  		io.to(data.room).emit('allMessages', foundRoom.messages);
+  	})
 	});
 });
 console.log("server started");
