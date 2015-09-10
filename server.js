@@ -176,7 +176,7 @@ io.on('connection', function(socket){
 	socket.on('action', function(data){
     Room.findOne({_id: data.room}, function(err, foundRoom){
     	var previousSituation = foundRoom.situation[0];
-    	var outgoingIntel = String;
+    	var outgoingIntel;
     	updateSituation(foundRoom.situation[0], data.impact, function(){
     		console.log(foundRoom.situation[0]);
     		foundRoom.situation[0].save();
@@ -185,11 +185,11 @@ io.on('connection', function(socket){
     				console.log(err);
     			}
     			if (previousSituation.balance == foundRoom.situation[0].balance){
-    				outgoingIntel += "There's a stalemate along the front line. ";
+    				outgoingIntel = "There's a stalemate along the front line. ";
     			} else if (previousSituation.balance < foundRoom.situation[0].balance){
-    				outgoingIntel += "The Ukrainian government is gaining ground against the Separatists. ";
+    				outgoingIntel = "The Ukrainian government is gaining ground against the Separatists. ";
     			} else if (previousSituation.balance > foundRoom.situation[0].balance){
-    				outgoingIntel += "The Separatists are pushing back the Ukrainian government. ";
+    				outgoingIntel = "The Separatists are pushing back the Ukrainian government. ";
     			}
     			if (previousSituation.escalation > foundRoom.situation[0].escalation){
     				outgoingIntel += "Fewer people are dying on all sides. ";
@@ -201,7 +201,7 @@ io.on('connection', function(socket){
     			} else if ((previousSituation.influenceOne/previousSituation.influenceTwo) > (foundRoom.situation[0].influenceOne/foundRoom.situation[0].influenceTwo)){
     				outgoingIntel += "Putin is taking control of the situation. ";
     			}
-    			io.to(data.room).emit('intel', outgoingIntel);
+    			io.to(data.room).emit('intel', "Someone acted, and things changed, but we have no idea what the current situation is. To be honest, no one really knows what's going one. Best of luck.");
     		});
     	});
     });
