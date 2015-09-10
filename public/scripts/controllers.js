@@ -31,6 +31,7 @@ app.controller('MainCtrl', ['$scope', '$location', function ($scope, $location) 
 		console.log("received positive confirmation");
 		currentUser = data.user;
 		clientScenario = data.scenario;
+		startCrisis = data.startCrisis;
 		$location.url("/crisis");
 	});
 
@@ -86,5 +87,8 @@ app.controller('CrisisCtrl', ['$scope', '$route', '$location', function ($scope,
 			console.log(data);
 			$scope.conversation = data;
 		})
+		if (!startCrisis){
+			startCrisis = true;
+		}
 	});
 }]);

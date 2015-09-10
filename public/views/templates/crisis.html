@@ -20,19 +20,21 @@
 					{{ intel }}
 				</div>
 			</div>
-			<div class="majorElement shadow">
-				<h3 class="alignCenter pad">Act!</h3>
-				<!-- Populate based on currentUser.team -->
-				<div ng-repeat="action in actionList">
-					<div class="row">
-						<div class="col-xs-4 alignCenter">
-							<button ng-click="act(action)">{{ action.text }}</button>
+			<div ng-show="startCrisis">
+				<div class="majorElement shadow">
+					<h3 class="alignCenter pad">Act!</h3>
+					<!-- Populate based on currentUser.team -->
+					<div ng-repeat="action in actionList">
+						<div class="row">
+							<div class="col-xs-4 alignCenter">
+								<button ng-click="act(action)">{{ action.text }}</button>
+							</div>
+							<div class="col-xs-8">
+								<p class="pad"> {{ action.details }}</p>
+							</div>
 						</div>
-						<div class="col-xs-8">
-							<p class="pad"> {{ action.details }}</p>
-						</div>
+						<hr>
 					</div>
-					<hr>
 				</div>
 			</div>
 		</div>

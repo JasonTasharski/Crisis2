@@ -131,7 +131,7 @@ io.on('connection', function(socket){
     			console.log(foundRoom);
     			console.log("else happened");
     		}
-	 	  	socket.emit('positiveConfirmation', {scenario: foundRoom.scenario, user: thisUser});
+	 	  	socket.emit('positiveConfirmation', {scenario: foundRoom.scenario, user: thisUser, startCrisis: true});
 	 	  	console.log("emit positive confirmation");
     	} else {
     		socket.emit('negativeConfirmation');
@@ -164,7 +164,7 @@ io.on('connection', function(socket){
     	console.log("assigned user Team RUS");
     }
     if (newRoom) {
- 	  	socket.emit('positiveConfirmation', {scenario: newRoom.scenario, user: thisUser});
+ 	  	socket.emit('positiveConfirmation', {scenario: newRoom.scenario, user: thisUser, startCrisis: false});
  	  	console.log("emit positive confirmation");	
  	  } else {
  	  	socket.emit('negativeConfirmation');
