@@ -53,11 +53,13 @@ var russia = new Team({title: "Russia", leader: "Vladimir Putin", regimeType: "a
 var ukraine = new Scenario({title: "Ukrainian Civil War", teamOne: usa, teamTwo: russia, introOne: "Heavily armed separatists have seized control of cities in Eastern Ukraine. We believe they are backed by the Russian government. We have to do something to prevent this country from being torn apart! The Ukrainian government is commencing an anti-terrorist operation.", introTwo: "The CIA has overthrown the Ukrainian government! We must act to protect the Russians in the east of the country before they're crushed by the coup leaders. After all, Ukraine was historically part of Russia anyway.", startParameters: new Situation({active: false, escalation: 0.3, balance: 5, momentumOne: 2, momentumTwo: 1.5, approvalOne: usa.baseApproval, approvalTwo: russia.baseApproval, influenceOne: usa.baseInfluence, influenceTwo: russia.baseInfluence}), strengthOne: usa.strength, strengthTwo: russia.strength});
 
 var updateSituation = function(target, impact, callback){
+	console.log(target);
 	target.momentumOne += impact.momentumOne,
 	target.momentumTwo += impact.momentumTwo,
 	target.escalation += impact.escalation,
 	target.influenceOne += impact.influenceOne,
 	target.influenceTwo += impact.influenceTwo;
+	console.log(target);
 	callback();
 }
 
@@ -137,6 +139,8 @@ io.on('connection', function(socket){
  	  		socket.leave(room)
     	}
     	foundRoom.save();
+    	socket.emit('allMessages', foundRoom.messages);
+    	io.to(room).emit('allMessages', foundRoom.messages);
     	socket.emit('intel', {introOne: foundRoom.scenario[0].introOne, introTwo: foundRoom.scenario[0].introTwo}); //redundancy for demo-safety; duplication won't matter
     	io.to(room).emit('intel', {introOne: foundRoom.scenario[0].introOne, introTwo: foundRoom.scenario[0].introTwo});
     })    
@@ -147,6 +151,7 @@ io.on('connection', function(socket){
 	socket.on('newRoom', function(data) {
     console.log("new room!");
     var newRoom = new Room({users: 1, scenario: ukraine, situation: new Situation(ukraine.startParameters), oneFill: data.onF ? socket.id : "", twoFill: data.twF ? socket.id : "", started: false, finished: false});
+    newRoom.messages.push(new Message({from: "Server", content: "Room full. Crisis initiated."}))
     newRoom.save();
     // no rush on server-side timer; non-MVP
     socket.join(newRoom._id);
@@ -171,10 +176,9 @@ io.on('connection', function(socket){
 
 	socket.on('action', function(data){
     Room.findOne({_id: data.room}, function(err, foundRoom){
-    	console.log(foundRoom.situation[0]);
     	updateSituation(foundRoom.situation[0], data.impact, function(){
     		foundRoom.save(function(){
-    			io.to(data.room).emit('intel', "The situation has mysteriously changed. No one's sure how or why at the moment. The only sure thing is that the world is waiting for YOU to respond!");
+    			io.to(data.room).emit('intel', "Someone acted, but the situation on the ground only changed temporarily. We're probably going to be stuck in a frozen conflict forever at this rate.");
     		});
     	});
     });
