@@ -24,7 +24,7 @@
 
 	<script>var socket = io();</script>
 </head>
-<body ng-controller="MainCtrl">
+<body ng-controller="MainCtrl" ng-class="{'redfor' : (currentUser.team == 'teamTwo')}">
 	<nav class="navbar navbar-default navbar-inverse">
     <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">

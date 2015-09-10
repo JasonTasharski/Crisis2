@@ -34,15 +34,31 @@ var arbitrary = app.listen(process.env.PORT || 8080, function(){
   console.log("server listening ");
 });
 
-var usa = new Team({title: "USA", leader: "Barack Obama", regimeType: "democratic", strength: 9, baseApproval: 4, baseInfluence: 8});
-var russia = new Team({title: "Russia", leader: "Vladimir Putin", regimeType: "autocratic", strength: 6, baseApproval: 7, baseInfluence: 5});
-var prc = new Team({title: "China", leader: "Xi Jinping", regimeType: "autocratic", strength: 7, baseApproval: 5, baseInfluence: 6}); //context for other values
+var pressureCeasefireU = new Action({available: true, done: false, text: "Push for Ceasefire!", details: "Pressure the friendly Ukrainian Government to enforce a ceasefire. Conflict will deescalate, but friendly forces will be vulnerable to a surprise attack.", impact: {influenceOne: -0.2, momentumOne: -0.5, escalation: -0.1}});
+var pressureCeasefireR = new Action({available: true, done: false, text: "Push for Ceasefire!", details: "Pressure the friendly Separatist Republics to enforce a ceasefire. Conflict will deescalate, but friendly forces will be vulnerable to a surprise attack.", impact: {influenceTwo: -0.2, momentumTwo: -0.5, escalation: -0.1}});
+var armUkraine = new Action({available: true, done: false, text: "Arm Ukraine!", details: "Send weapons to help the friendly Ukrainian Government win the war. Friendly forces will make more progress, but the conflict will escalate.", impact: {influenceOne: 0.2, momentumOne: 1, escalation: 0.2}});
+var armSeparatists = new Action({available: true, done: false, text: "Arm Separatists!", details: "Send weapons to help the friendly Separatist Republics win the war. Friendly forces will make more progress, but the conflict will escalate.", impact: {influenceTwo: 0.2, momentumTwo: 1, escalation: 0.2}});
+var condemnRussia = new Action({available: true, done: false, text: "Condemn Russia!", details: "Accuse Russia of bad things at the UN. Your influence will rise, but conflict will escalate.", impact: {influenceOne: 0.5, escalation: 0.1}});
+var condemnUS = new Action({available: true, done: false, text: "Condemn USA!", details: "Accuse the United States of bad things at the UN. Your influence will rise, but conflict will escalate.", impact: {influenceTwo: 0.5, escalation: 0.1}});
+var sendTroopsU = new Action({available: true, done: false, text: "Launch Airstrikes!", details: "Directly attack Separatist forces. Friendly troops will make more progress, but the war will escalate greatly.", impact: {influenceOne: 0.5, momentumOne: 2, escalation: 0.5}});
+var sendTroopsR = new Action({available: true, done: false, text: "Send Tanks!", details: "Directly attack Ukrainian forces. Friendly troops will make more progress, but the war will escalate greatly.", impact: {influenceTwo: 0.5, momentumTwo: 2, escalation: 0.5}});
 
-var ukraine = new Scenario({title: "Ukrainian Civil War", teamOne: usa, teamTwo: russia, introOne: "Heavily armed separatists have seized control of cities in Eastern Ukraine. We believe they are backed by the Russian government. We have to do something to prevent this country from being torn apart! The Ukrainian government is commencing an anti-terrorist operation.", introTwo: "The CIA has overthrown the Ukrainian government! We must act to protect the Russians in the east of the country before they're crushed by the coup leaders. After all, Ukraine was historically part of Russia anyway.", startParameters: new Situation({active: false, escalation: 3, balance: 5, momentumOne: 2, momentumTwo: 1.5, approvalOne: usa.baseApproval, approvalTwo: russia.baseApproval, influenceOne: usa.baseInfluence, influenceTwo: russia.baseApproval}), strengthOne: usa.strength, strengthTwo: russia.strength});
+var usa = new Team({title: "USA", leader: "Barack Obama", regimeType: "democratic", strength: 9, baseApproval: 4, baseInfluence: 8, actions: [pressureCeasefireU, armUkraine, condemnRussia, sendTroopsU]});
+var russia = new Team({title: "Russia", leader: "Vladimir Putin", regimeType: "autocratic", strength: 6, baseApproval: 7, baseInfluence: 5, actions: [pressureCeasefireR, armSeparatists, condemnUS, sendTroopsR]});
+//var prc = new Team({title: "China", leader: "Xi Jinping", regimeType: "autocratic", strength: 7, baseApproval: 5, baseInfluence: 6}); //context for other values
+
+
+var ukraine = new Scenario({title: "Ukrainian Civil War", teamOne: usa, teamTwo: russia, introOne: "Heavily armed separatists have seized control of cities in Eastern Ukraine. We believe they are backed by the Russian government. We have to do something to prevent this country from being torn apart! The Ukrainian government is commencing an anti-terrorist operation.", introTwo: "The CIA has overthrown the Ukrainian government! We must act to protect the Russians in the east of the country before they're crushed by the coup leaders. After all, Ukraine was historically part of Russia anyway.", startParameters: new Situation({active: false, escalation: 0.3, balance: 5, momentumOne: 2, momentumTwo: 1.5, approvalOne: usa.baseApproval, approvalTwo: russia.baseApproval, influenceOne: usa.baseInfluence, influenceTwo: russia.baseApproval}), strengthOne: usa.strength, strengthTwo: russia.strength});
 
 var checkResults = function(scenario, situation){
 	if (scenario.title == "Ukrainian Civil War"){
-
+		if (situation.balance >= 10){
+			//Ukraine has suppressed the Russian-backed separatists
+		} else if (situation.balance <= 0){
+			//The separatatists have reached Kiev and overthrown the fascist junta
+		} else if (situation.escalation >= 2){
+			//ww3
+		}
 	}
 	// on action, check for particular combinations of values in the situation (after the action is implemented) that fulfill victory or defeat conditions for either side. For instance, if Russia's influence is at any point higher than (equal to?) US influence, Putin smirks. If Russian approval ever reaches zero, Putin is overthrown (if US influence is high, Russia gains a new democratic government; if low, Russia falls into chaos). If escalation ever reaches zero, there's peace in Ukraine, and no one loses. If escalation ever exceeds ten, there's an accidental nuclear launch and everyone dies. If the balance ever reaches zero or ten, one side or the other wins the war completely, making their backer happy. Every action MUST have a timer, otherwise spam-to-victory is possible (timer is shorter when influence and approval are high, and longer when influence and approval are low)
 };
@@ -64,11 +80,11 @@ io.on('connection', function(socket){
   socket.on('disconnect', function(){ //logs disconnect; sockets leave room automatically on disconnect; on disconnect
 	// find rooms where user is connected; set teams to "" if they match socket.id
 	console.log("disconnect initiated!");
-	console.log(socket.id);
   	Room.findOne({oneFill: socket.id}, function(err, foundRoom){
   		if (foundRoom){
   			foundRoom.oneFill = "";
   			foundRoom.users--;
+  			foundRoom.save();
   			if (foundRoom.users == 0){
   				foundRoom.remove();
   				console.log("room deleted");
@@ -79,6 +95,7 @@ io.on('connection', function(socket){
   		if (foundRoom){
   			foundRoom.twoFill = "";
   			foundRoom.users--;
+  			foundRoom.save();
   			if (foundRoom.users == 0){
   				foundRoom.remove();
   				console.log("room deleted");
@@ -127,10 +144,7 @@ io.on('connection', function(socket){
 	socket.on('newRoom', function(data) {
     console.log("new room!");
     var newRoom = new Room({users: 1, scenario: ukraine, situation: new Situation(ukraine.startParameters), oneFill: data.onF ? socket.id : "", twoFill: data.twF ? socket.id : "", started: false, finished: false});
-    newRoom.save(function(err, room){
-    	console.log("room saved:");
-    	console.log(room);
-    });
+    newRoom.save();
     // no rush on server-side timer; non-MVP
     socket.join(newRoom._id);
     var thisUser;
@@ -152,21 +166,31 @@ io.on('connection', function(socket){
  	  //
 	});
 	socket.on('action', function(data){ //on action, update situation; when situation is done updating, emit updated situation and let the other stuff work itself out client-side
+		// increment situation values by by delivered impact
+		// then emit update to delivered room
+		// options:
+			// in room, based on team and situation, change intel
+			// emit intel with no distinction according to team
 		console.log("received action");
-		if (data.actionType == "condemn") {
-			if (data.target == "teamTwo") {
-				io.to(data.room).emit('intel', {content: "Obama: 'Fuck you, Putin!' "});
-				console.log("emit intel");
-			} else if (data.target == "proxTwo") {
-				io.to(data.room).emit('intel', {content: "Obama: 'Fuck you, Separatists!' "});
-				console.log("emit intel");
-			}
-		} else if (data.actionType == "praise"){
-			if (data.target == "proxOne"){
-				io.to(data.room).emit('intel', {content: "Obama: 'You rock, Ukrainians!' "});
-				console.log("emit intel");
-			}
-		}
+		console.log(data.impact);
+    Room.findOne({_id: data.room}, function(err, foundRoom){
+    	console.log(foundRoom.situation[0]);
+   		foundRoom.situation[0].influenceOne += data.impact.influenceOne;
+   		foundRoom.situation[0].influenceTwo += data.impact.influenceTwo;
+   		foundRoom.situation[0].momentumOne += data.impact.momentumOne;
+   		foundRoom.situation[0].momentumTwo += data.impact.momentumTwo;
+   		foundRoom.situation[0].escalation += data.impact.escalation;
+   		//situation math!
+   		foundRoom.situation[0].balance += (foundRoom.situation[0].momentumOne - foundRoom.situation[0].momentumTwo);
+   		// end math!
+   		foundRoom.save();
+   		console.log(foundRoom.situation[0].balance);
+   		console.log("impact saved");
+   		var newIntel;
+   		//calculate
+   		// io.to(data.room).emit('intel', {}); //UNCOMMENT!!!
+    });
+	// everything between here and the above comments will change
 	});
 	socket.on('unsubscribe', function(room) {
     console.log('leaving room');
@@ -176,6 +200,7 @@ io.on('connection', function(socket){
   		if (foundRoom){
   			foundRoom.oneFill = "";
   			foundRoom.users--;
+  			foundRoom.save();
   			if (foundRoom.users == 0){
   				foundRoom.remove();
   				console.log("room deleted");
@@ -186,6 +211,7 @@ io.on('connection', function(socket){
   		if (foundRoom){
   			foundRoom.twoFill = "";
   			foundRoom.users--;
+  			foundRoom.save();
   			if (foundRoom.users == 0){
   				foundRoom.remove();
   				console.log("room deleted");

@@ -34,6 +34,7 @@ app.config(['$routeProvider', '$locationProvider', function ($routeProvider, $lo
 var socket = io.connect('http://localhost:8080');
 var currentUser;
 var clientScenario;
+var clientIntel;
 app.filter('reverse', function() {
   return function(items) {
     return items.slice().reverse();
